@@ -19,7 +19,6 @@ from torchvision.transforms.functional import resize, crop
 
 model = torch.hub.load('anibali/yolov5', 'yolov5s', pretrained=True)
 model.nms()
-model.eval()
 
 img = read_image('data/images/zidane.jpg').float().div(255)
 img = crop(img, 0, 425, 720, 720)
