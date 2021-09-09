@@ -1,3 +1,41 @@
+### About this fork
+
+Hi, this is a message from the creator of this fork.
+
+This fork was created to provide a way of downloading and using YOLOv5 models without requiring
+lots of external dependencies (plotting libraries, Pandas, etc). I have managed to limit the
+required dependencies to:
+
+```python
+dependencies = ['torch', 'torchvision', 'yaml', 'scipy']
+```
+
+Example usage:
+
+```python
+import torch
+from torchvision.io.image import read_image
+from torchvision.transforms.functional import resize, crop
+
+model = torch.hub.load('anibali/yolov5', 'yolov5s', pretrained=True)
+model.nms()
+model.eval()
+
+img = read_image('data/images/zidane.jpg').float().div(255)
+img = crop(img, 0, 425, 720, 720)
+img = resize(img, [640, 640])
+
+with torch.no_grad():
+    y = model(img[None, ...])[0]
+
+for det in y:
+    print(det[:4], float(det[4]), model.names[int(det[5])])
+```
+
+That's all from me. Continue reading for the original README file contents.
+
+---
+
 <a href="https://apps.apple.com/app/id1452689527" target="_blank">
 <img src="https://user-images.githubusercontent.com/26833433/98699617-a1595a00-2377-11eb-8145-fc674eb9b1a7.jpg" width="1000"></a>
 &nbsp

@@ -16,8 +16,8 @@ import torch
 import torchvision
 import yaml
 
-from utils.metrics import fitness
-from utils.torch_utils import init_torch_seeds
+from yolov5.utils.metrics import fitness
+from yolov5.utils.torch_utils import init_torch_seeds
 
 try:
     import cv2
@@ -535,7 +535,7 @@ def print_mutation(hyp, results, yaml_file='hyp_evolved.yaml', bucket=''):
     print('\n%s\n%s\nEvolved fitness: %s\n' % (a, b, c))
 
     if bucket:
-        from utils.google_utils import gsutil_getsize
+        from yolov5.utils.google_utils import gsutil_getsize
         url = 'gs://%s/evolve.txt' % bucket
         if gsutil_getsize(url) > (os.path.getsize('evolve.txt') if os.path.exists('evolve.txt') else 0):
             os.system('gsutil cp %s .' % url)  # download evolve.txt if larger than local

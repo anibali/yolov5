@@ -11,8 +11,8 @@ import torch.nn as nn
 from PIL import Image
 from torch.cuda import amp
 
-from utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh
-from utils.torch_utils import time_synchronized
+from yolov5.utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh
+from yolov5.utils.torch_utils import time_synchronized
 
 
 def autopad(k, p=None):  # kernel, padding
@@ -275,7 +275,7 @@ class autoShape(nn.Module):
             shape1.append([y * g for y in s])
             imgs[i] = im  # update
         shape1 = [make_divisible(x, int(self.stride.max())) for x in np.stack(shape1, 0).max(0)]  # inference shape
-        from utils.datasets import letterbox
+        from yolov5.utils.datasets import letterbox
         x = [letterbox(im, new_shape=shape1, auto=False)[0] for im in imgs]  # pad
         x = np.stack(x, 0) if n > 1 else x[0][None]  # stack
         x = np.ascontiguousarray(x.transpose((0, 3, 1, 2)))  # BHWC to BCHW
@@ -315,7 +315,7 @@ class Detections:
         self.s = shape  # inference BCHW shape
 
     def display(self, pprint=False, show=False, save=False, render=False, save_dir=''):
-        from utils.plots import color_list, plot_one_box
+        from yolov5.utils.plots import color_list, plot_one_box
         colors = color_list()
         for i, (img, pred) in enumerate(zip(self.imgs, self.pred)):
             str = f'image {i + 1}/{len(self.pred)}: {img.shape[0]}x{img.shape[1]} '
