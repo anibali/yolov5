@@ -5,7 +5,6 @@ import torch
 import torch.nn as nn
 
 from models.common import Conv, DWConv
-from utils.google_utils import attempt_download
 
 
 class CrossConv(nn.Module):
@@ -112,6 +111,7 @@ class Ensemble(nn.ModuleList):
 
 def attempt_load(weights, map_location=None):
     # Loads an ensemble of models weights=[a,b,c] or a single model weights=[a] or weights=a
+    from utils.google_utils import attempt_download
     model = Ensemble()
     for w in weights if isinstance(weights, list) else [weights]:
         attempt_download(w)

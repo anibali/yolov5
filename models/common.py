@@ -1,20 +1,17 @@
 # YOLOv5 common modules
 
 import math
+import re
 from copy import copy
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
-import requests
 import torch
 import torch.nn as nn
 from PIL import Image
 from torch.cuda import amp
 
-from utils.datasets import letterbox
 from utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh
-from utils.plots import color_list, plot_one_box
 from utils.torch_utils import time_synchronized
 
 
@@ -260,7 +257,12 @@ class autoShape(nn.Module):
         for i, im in enumerate(imgs):
             f = f'image{i}'  # filename
             if isinstance(im, str):  # filename or uri
-                im, f = np.asarray(Image.open(requests.get(im, stream=True).raw if im.startswith('http') else im)), im
+                import requests
+                f = im
+                if re.match('https?://', f):
+                    im = np.asarray(Image.open(requests.get(f, stream=True).raw))
+                else:
+                    im = np.asarray(Image.open(f))
             elif isinstance(im, Image.Image):  # PIL Image
                 im, f = np.asarray(im), getattr(im, 'filename', f) or f
             files.append(Path(f).with_suffix('.jpg').name)
@@ -273,6 +275,7 @@ class autoShape(nn.Module):
             shape1.append([y * g for y in s])
             imgs[i] = im  # update
         shape1 = [make_divisible(x, int(self.stride.max())) for x in np.stack(shape1, 0).max(0)]  # inference shape
+        from utils.datasets import letterbox
         x = [letterbox(im, new_shape=shape1, auto=False)[0] for im in imgs]  # pad
         x = np.stack(x, 0) if n > 1 else x[0][None]  # stack
         x = np.ascontiguousarray(x.transpose((0, 3, 1, 2)))  # BHWC to BCHW
@@ -312,6 +315,7 @@ class Detections:
         self.s = shape  # inference BCHW shape
 
     def display(self, pprint=False, show=False, save=False, render=False, save_dir=''):
+        from utils.plots import color_list, plot_one_box
         colors = color_list()
         for i, (img, pred) in enumerate(zip(self.imgs, self.pred)):
             str = f'image {i + 1}/{len(self.pred)}: {img.shape[0]}x{img.shape[1]} '
@@ -353,6 +357,7 @@ class Detections:
 
     def pandas(self):
         # return detections as pandas DataFrames, i.e. print(results.pandas().xyxy[0])
+        import pandas as pd
         new = copy(self)  # return copy
         ca = 'xmin', 'ymin', 'xmax', 'ymax', 'confidence', 'class', 'name'  # xyxy columns
         cb = 'xcenter', 'ycenter', 'width', 'height', 'confidence', 'class', 'name'  # xywh columns

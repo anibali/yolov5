@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
@@ -159,6 +158,7 @@ class ConfusionMatrix:
 
     def plot(self, save_dir='', names=()):
         try:
+            import matplotlib.pyplot as plt
             import seaborn as sn
 
             array = self.matrix / (self.matrix.sum(0).reshape(1, self.nc + 1) + 1E-6)  # normalize
@@ -184,6 +184,7 @@ class ConfusionMatrix:
 # Plots ----------------------------------------------------------------------------------------------------------------
 
 def plot_pr_curve(px, py, ap, save_dir='pr_curve.png', names=()):
+    import matplotlib.pyplot as plt
     # Precision-recall curve
     fig, ax = plt.subplots(1, 1, figsize=(9, 6), tight_layout=True)
     py = np.stack(py, axis=1)
@@ -204,6 +205,7 @@ def plot_pr_curve(px, py, ap, save_dir='pr_curve.png', names=()):
 
 
 def plot_mc_curve(px, py, save_dir='mc_curve.png', names=(), xlabel='Confidence', ylabel='Metric'):
+    import matplotlib.pyplot as plt
     # Metric-confidence curve
     fig, ax = plt.subplots(1, 1, figsize=(9, 6), tight_layout=True)
 
